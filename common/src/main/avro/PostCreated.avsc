@@ -1,0 +1,12 @@
+{
+    "type" : "record",
+    "namespace" : "com.trendpulse.avro",
+    "name" : "PostCreated",
+
+    "fields" : [
+        { "name" : "postId",   "type" : "string" },
+        { "name" : "userId",   "type" : "string" },
+        { "name" : "text",     "type" : "string" },
+        { "name" : "timestamp","type" : "long"   }
+    ]
+}

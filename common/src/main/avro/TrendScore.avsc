@@ -1,0 +1,12 @@
+{
+    "type" : "record",
+    "namespace" : "com.trendpulse.avro",
+    "name" : "TrendScore",
+    "fields" : [
+        { "name":"hashtag",      "type":"string" },
+        { "name":"windowStart",  "type":"long"   },
+        { "name":"windowEnd",    "type":"long"   },
+        { "name":"count",        "type":"int"    },
+        { "name":"surgeScore",   "type":"float"  }
+    ]
+}

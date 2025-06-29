@@ -25,6 +25,7 @@
     <properties>
         <java.version>17</java.version>
         <springboot.version>3.5.3</springboot.version>
+        <avro.version>1.11.0</avro.version>
     </properties>
 
     <dependencyManagement>

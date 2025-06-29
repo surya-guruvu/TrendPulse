@@ -1,0 +1,11 @@
+{
+    "type":"record",
+    "namespace":"com.trendpulse.avro",
+    "name":"TrendAlert",
+    "fields":[
+        { "name":"userId",     "type":"string" },
+        { "name":"hashtag",    "type":"string" },
+        { "name":"alertTime",  "type":"long"   },
+        { "name":"surgeScore", "type":"float"  }
+    ]
+}

@@ -29,6 +29,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
@@ -43,9 +49,12 @@
 			<artifactId>spring-kafka-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+
 	</dependencies>
 
 	<build>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -60,6 +69,46 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+
+			<!-- === generate Java sources from .avsc at compile time === -->
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+				<version>${avro.version}</version>
+
+				<executions>
+					<execution>
+					<phase>generate-sources</phase>
+					<goals><goal>schema</goal></goals>
+					<configuration>
+						<!-- where your .avsc files will live -->
+						<sourceDirectory>${project.basedir}/src/main/avro</sourceDirectory>
+						<!-- where generated .java files land -->
+						<outputDirectory>${project.build.directory}/generated-sources/avro</outputDirectory>
+					</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- make Maven compile step see generated code -->
+			<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>build-helper-maven-plugin</artifactId>
+			<version>3.4.0</version>
+			<executions>
+				<execution>
+				<id>add-avro-sources</id>
+				<phase>generate-sources</phase>
+				<goals><goal>add-source</goal></goals>
+				<configuration>
+					<sources>
+					<source>${project.build.directory}/generated-sources/avro</source>
+					</sources>
+				</configuration>
+				</execution>
+			</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

@@ -1,0 +1,15 @@
+{
+    "type" : "record",
+    "namespace" : "com.trendpulse.avro",
+    "name" : "PostEnriched",
+    "fields" : [
+        { "name":"postId",        "type":"string" },
+        { "name":"userId",        "type":"string" },
+        { "name":"text",          "type":"string" },
+        { "name":"timestamp",     "type":"long"   },
+        { "name":"hashtags",      "type":{ "type":"array", "items":"string" } },
+        { "name":"mentions",      "type":{ "type":"array", "items":"string" } },
+        { "name":"language",      "type":"string" },
+        { "name":"sentimentScore","type":"float"  }
+    ]
+}
