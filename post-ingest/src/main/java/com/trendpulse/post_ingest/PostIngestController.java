@@ -3,11 +3,13 @@ package com.trendpulse.post_ingest;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trendpulse.avro.PostCreated;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -16,14 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/posts")
 public class PostIngestController {
 
-    private final KafkaTemplate<String, PostCreated> kafkaTemplate;
+    private final PostService postService;
 
-    public PostIngestController(KafkaTemplate<String, PostCreated> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
+    public PostIngestController(PostService postService) {
+        this.postService = postService;
     }
 
     @PostMapping
-    public ResponseEntity<?> postMethodName(@RequestBody PostRequest postRequest) {
+    public ResponseEntity<?> postMethodName(@Valid @RequestBody PostRequest postRequest) {
         PostCreated event = PostCreated.newBuilder()
                 .setPostId(UUID.randomUUID().toString())
                 .setUserId(postRequest.userId())
@@ -31,7 +33,7 @@ public class PostIngestController {
                 .setTimestamp(System.currentTimeMillis())
                 .build();
 
-        kafkaTemplate.send("post.raw", event.getPostId().toString(), event);
+        postService.handlePost(postRequest);
 
         return ResponseEntity.accepted().build();
     }
