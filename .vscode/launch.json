@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PostIngestApplication<post-ingest>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.trendpulse.post_ingest.PostIngestApplication",
+            "projectName": "post-ingest",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
