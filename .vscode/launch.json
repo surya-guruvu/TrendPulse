@@ -8,6 +8,17 @@
             "mainClass": "com.trendpulse.post_ingest.PostIngestApplication",
             "projectName": "post-ingest",
             "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=53988 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=post-ingest"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-TextEnricherApplication<text-enricher>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.trendpulse.text_enricher.TextEnricherApplication",
+            "projectName": "text-enricher",
+            "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
     ]

@@ -23,10 +23,21 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT  # ← THIS is required
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
     volumes:
       - kafka_data:/var/lib/kafka/data
     ports:
       - "9092:9092"
+
+  kafka-init:
+      image: confluentinc/cp-kafka:7.5.0
+      depends_on:
+        - kafka
+      entrypoint: ["/bin/bash", "-c", "/init-topics.sh"]
+      volumes:
+        - ./init-topics.sh:/init-topics.sh:ro
 
   schema-registry:
     image: confluentinc/cp-schema-registry:latest
