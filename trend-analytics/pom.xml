@@ -12,7 +12,7 @@
 	<artifactId>trend-analytics</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>trend-analytics</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Trend Analytics Micro Service</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -34,9 +34,32 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
+		<!-- Kafka Streams-->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-streams</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+
+		<!-- Spring Kafka-->
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
+		<!-- Avro Serializer and Deserializer-->
+		<dependency>
+			<groupId>io.confluent</groupId>
+			<artifactId>kafka-avro-serializer</artifactId>
+			<version>7.6.0</version>
+		</dependency>
+
+		<!-- Kafka Streans Avro Serde-->
+		<dependency>
+			<groupId>io.confluent</groupId>
+			<artifactId>kafka-streams-avro-serde</artifactId>
+			<version>7.6.0</version>
 		</dependency>
 
 		<dependency>

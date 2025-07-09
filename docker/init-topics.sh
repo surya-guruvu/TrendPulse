@@ -7,8 +7,17 @@ set -e
 # Check if the required environment variables are set
 
 kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists \
-    --topic post.raw --partitions 6 --replication-factor 1
+    --topic post.raw --partitions 1 --replication-factor 1
 
 
 kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists \
-    --topic post.enriched --partitions 6 --replication-factor 1
+    --topic post.enriched --partitions 1 --replication-factor 1
+
+kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists \
+    --topic trend.score --partitions 1 --replication-factor 1
+
+kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists \
+    --topic trend.score.topN --partitions 1 --replication-factor 1
+
+
+

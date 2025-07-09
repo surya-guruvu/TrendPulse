@@ -19,6 +19,28 @@
             "mainClass": "com.trendpulse.text_enricher.TextEnricherApplication",
             "projectName": "text-enricher",
             "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=50860 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=text-enricher"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-TrendAnalyticsApplication<trend-analytics>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.trendpulse.trend_analytics.TrendAnalyticsApplication",
+            "projectName": "trend-analytics",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=50874 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=trend-analytics"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AlertEngineApplication<alert-engine>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.trendpulse.alert_engine.AlertEngineApplication",
+            "projectName": "alert-engine",
+            "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
     ]
