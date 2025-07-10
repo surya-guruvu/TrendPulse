@@ -1,0 +1,15 @@
+
+
+ 
+rules:
+  default:
+    minSurge: 0.1
+    minCount: 5
+ 
+  overrides:
+    "#ai":
+      minSurge: 2.5
+      minCount: 50
+    "#football":
+      minSurge: 4.0
+      minCount: 300

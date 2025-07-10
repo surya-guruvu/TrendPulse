@@ -3,9 +3,12 @@
     "namespace":"com.trendpulse.avro",
     "name":"TrendAlert",
     "fields":[
-        { "name":"userId",     "type":"string" },
-        { "name":"hashtag",    "type":"string" },
-        { "name":"alertTime",  "type":"long"   },
-        { "name":"surgeScore", "type":"float"  }
+        { "name":"userId",       "type":"string" },
+        { "name":"hashtag",      "type":"string" },
+        { "name":"windowStart",  "type":"long"   },
+        { "name":"windowEnd",    "type":"long"   },
+        { "name":"surgeScore",   "type":"float"  },
+        { "name":"count",        "type":"int"    },
+        { "name":"msg",          "type":"string" }
     ]
 }

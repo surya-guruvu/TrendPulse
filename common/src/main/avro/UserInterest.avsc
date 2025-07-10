@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "namespace": "com.trendpulse.avro",
+  "name": "UserInterest",
+  
+  "fields": [
+    { "name": "userId", "type": "string" },
+    { "name": "hashtags", "type": { "type": "array", "items": "string" }}
+  ]
+}

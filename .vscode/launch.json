@@ -42,6 +42,16 @@
             "projectName": "alert-engine",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-CommonApplication<common>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.trendpulse.common.CommonApplication",
+            "projectName": "common",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
