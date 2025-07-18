@@ -62,11 +62,11 @@ public class AlertProcessor {
         .stream("trend.score.topN", Consumed.with(Serdes.String(),AvroSerdes.trendScore()));
 
         // Step 1B:  Source: User Interests
-        KStream<String, UserInterest> userInterests = builder
-        .stream("user.interest", Consumed.with(Serdes.String(),AvroSerdes.userInterest()));
+        KTable<String, UserInterest> userInterests = builder
+        .table("user.interest", Consumed.with(Serdes.String(),AvroSerdes.userInterest()));
 
         // Step 2A: explode interests into tag → userId pairs
-        KStream<String, String> tagUserPairs = userInterests.flatMap((userId, uI) -> {
+        KStream<String, String> tagUserPairs = userInterests.toStream().flatMap((userId, uI) -> {
             return uI.getHashtags().stream().map(CharSequence::toString).map(tag -> KeyValue.pair(tag.toString(),userId.toString())).toList();
         });
 

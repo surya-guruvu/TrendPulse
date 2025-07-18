@@ -19,5 +19,8 @@ kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists \
 kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists \
     --topic trend.score.topN --partitions 1 --replication-factor 1
 
+kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists \
+    --topic user.interest --partitions 1 --replication-factor 1
+
 
 

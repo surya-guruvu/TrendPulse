@@ -52,6 +52,16 @@
             "projectName": "common",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-GatewayApiApplication<gateway-api>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.trendpulse.gateway_api.GatewayApiApplication",
+            "projectName": "gateway-api",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
