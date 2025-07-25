@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/follow")
+@RequestMapping("/api/")
 @RequiredArgsConstructor
 public class InterestController {
     
     @Autowired
     private final InterestService interestService;
 
-    @PostMapping
+    @PostMapping("/follow")
     public ResponseEntity<?> follow(@AuthenticationPrincipal Jwt principal, @RequestBody FollowRequest followRequest) {
         // String userId = principal.getSubject();
         String userId = principal.getClaimAsString("preferred_username");
@@ -29,6 +29,7 @@ public class InterestController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/unfollow")
     public ResponseEntity<?> unfollow(@AuthenticationPrincipal Jwt principal, @RequestBody FollowRequest followRequest){
         // String userId = principal.getSubject();
         String userId = principal.getClaimAsString("preferred_username");

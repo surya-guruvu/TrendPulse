@@ -1,6 +1,7 @@
 package com.trendpulse.gateway_api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -16,10 +17,10 @@ import lombok.RequiredArgsConstructor;
 public class AlertKafkaListener {
 
     @Autowired
-    private final RedisTemplate<String,Object> redisTemplate;
+    private final ReactiveRedisTemplate<String, byte[]> redisTemplate;
 
     @Autowired
-    private final RedisAvroService redisAvroService;
+    private final ReactiveRedisAvroService redisAvroService;
 
     @KafkaListener(
         topics = "alert.trend.spike",
@@ -30,9 +31,7 @@ public class AlertKafkaListener {
 
         String redisKey = "alerts:" + userId;
 
-        // redisTemplate.opsForList().leftPush(redisKey, trendAlert);
-
-        redisAvroService.pushAvro(redisKey, trendAlert, TrendAlert.class);
+        redisAvroService.pushAvro(redisKey, trendAlert, TrendAlert.class).block();
         redisTemplate.opsForList().trim(redisKey, 0, 19);
     }
 

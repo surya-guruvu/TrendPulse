@@ -1,7 +1,7 @@
 package com.trendpulse.gateway_api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +20,10 @@ public class InterestService {
     private KafkaTemplate<String, UserInterest> kafkaTemplate;
 
     @Autowired
-    private RedisTemplate<String,Object> redisTemplate;
+    private ReactiveRedisTemplate<String,byte[]> reactiveRedisTemplate;
 
     @Autowired
-    private final RedisAvroService redisAvroService;
-
-    InterestService(RedisAvroService redisAvroService) {
-        this.redisAvroService = redisAvroService;
-    }
+    private ReactiveRedisAvroService redisAvroService;
 
     public static List<CharSequence> toCharSequenceList(List<String> strings) {
         return new ArrayList<>(strings);
@@ -37,7 +33,9 @@ public class InterestService {
         System.out.println("YES");
         String redisKey = "interest:" + userId;
 
-        UserInterest current = redisAvroService.getAvro(redisKey, UserInterest.class);
+        UserInterest current = redisAvroService.getAvro(redisKey, UserInterest.class).block();
+
+        System.out.println("Current Interest: " + current);
 
         Set<String> combined = new HashSet<>();
 
@@ -56,8 +54,7 @@ public class InterestService {
                                         .setHashtags(toCharSequenceList(new ArrayList<String>(combined)))
                                         .build();
 
-        // redisTemplate.opsForList().leftPush(redisKey,updated);
-        redisAvroService.setAvro(redisKey, updated, UserInterest.class);
+        redisAvroService.setAvro(redisKey, updated, UserInterest.class).block();
 
         kafkaTemplate.send("user.interest",userId,updated);
     }
@@ -65,20 +62,25 @@ public class InterestService {
     public void unfollow(String userId, List<String> tagsToRemove){
         String redisKey = "interest:" + userId;
 
-        UserInterest current = redisAvroService.getAvro(redisKey, UserInterest.class);
+        UserInterest current = redisAvroService.getAvro(redisKey, UserInterest.class).block();
 
         if(current == null){
             return;
         }
 
+        List<String> tagsToRemoveLower = tagsToRemove.stream()
+                                                .map(String::toLowerCase)
+                                                .map(String::strip)
+                                                .toList();
+
         List<String> currentHashTags = current.getHashtags().stream().map(CharSequence::toString)
-                                                .filter(tag -> !tagsToRemove.contains(tag))
+                                                .filter(tag -> !tagsToRemoveLower.contains(tag))
                                                 .toList();
 
         if(currentHashTags.isEmpty()){
             // 👇 Produce a tombstone → deletes entry from KTable
             kafkaTemplate.send("user.interest", userId, null);
-            redisTemplate.delete("interest:" + userId);
+            reactiveRedisTemplate.delete("interest:" + userId);
         }
         else{
             // Step 2: Build updated interest
@@ -87,7 +89,7 @@ public class InterestService {
                                             .setHashtags(toCharSequenceList(currentHashTags))
                                             .build();
 
-            redisAvroService.setAvro(redisKey, updated, UserInterest.class);
+            redisAvroService.setAvro(redisKey, updated, UserInterest.class).block();
             kafkaTemplate.send("user.interest",userId,updated);
         }
 
