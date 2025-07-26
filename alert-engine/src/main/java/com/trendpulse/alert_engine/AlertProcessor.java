@@ -59,17 +59,28 @@ public class AlertProcessor {
 
         // Step 1A:  Source: top‑N trending hashtags
         KStream<String, TrendScore> trendTopN = builder
-        .stream("trend.score.topN", Consumed.with(Serdes.String(),AvroSerdes.trendScore()));
+            .stream("trend.score.topN", Consumed.with(Serdes.String(), AvroSerdes.trendScore()))
+            .peek((key, value) -> System.out.println("[trendTopN] key=" + key + ", value=" + value));
 
         // Step 1B:  Source: User Interests
         KTable<String, UserInterest> userInterests = builder
-        .table("user.interest", Consumed.with(Serdes.String(),AvroSerdes.userInterest()));
+            .table("user.interest", Consumed.with(Serdes.String(), AvroSerdes.userInterest()));
+
+        // Print userInterests as they are updated
+        userInterests
+            .toStream()
+            .peek((key, value) -> System.out.println("[userInterests] key=" + key + ", value=" + value));
 
         // Step 2A: explode interests into tag → userId pairs
-        KStream<String, String> tagUserPairs = userInterests.toStream().flatMap((userId, uI) -> {
-            return uI.getHashtags().stream().map(CharSequence::toString).map(tag -> KeyValue.pair(tag.toString(),userId.toString())).toList();
-        });
-
+        KStream<String, String> tagUserPairs = userInterests
+            .toStream()
+            .flatMap((userId, uI) -> {
+                return uI.getHashtags().stream()
+                    .map(CharSequence::toString)
+                    .map(tag -> KeyValue.pair(tag.toString(), userId.toString()))
+                    .toList();
+            })
+            .peek((key, value) -> System.out.println("[tagUserPairs] tag=" + key + ", userId=" + value));
 
         // Step 2B: aggregate into Set<userId> per tag
         KTable<String, TagFollowers> tagFollowers  = tagUserPairs
@@ -79,6 +90,11 @@ public class AlertProcessor {
                 (tag, user, agg) -> agg.add(user),        // add
                 Materialized.with(Serdes.String(), new JsonSerde<>(TagFollowers.class))
             );
+
+        // Print tagFollowers as they are updated
+        tagFollowers
+            .toStream()
+            .peek((key, value) -> System.out.println("[tagFollowers] tag=" + key + ", followers=" + value));
             
 
         KStream<String, TrendAlert> alerts = trendTopN
@@ -86,24 +102,27 @@ public class AlertProcessor {
                 //   (tag, trend) -> tag,                // map key for join
                   (trend, followers) -> makeAlerts(trend, followers))  // returns List<TrendAlert>
             // .flatMapValues(list ->list)
-            .flatMap((key,value)-> value.stream().map(v -> KeyValue.pair(v.getUserId().toString(), v)).toList());
+                  .flatMap((key,value)-> value.stream().map(v -> KeyValue.pair(v.getUserId().toString(), v)).toList());
 
         alerts.to("alert.trend.spike", Produced.with(Serdes.String(), AvroSerdes.trendAlertSerde()));
 
         return builder.build();
     }
 
-        /* Build alert list for a single TrendScore + follower set */
+    /* Build alert list for a single TrendScore + follower set */
     private List<TrendAlert> makeAlerts(TrendScore ts, TagFollowers followers) {
+        System.out.println("makeAlerts called with:");
+        System.out.println("  TrendScore: " + ts);
+        System.out.println("  TagFollowers: " + followers.getUserIds());
+
         if (followers == null || followers.getUserIds().isEmpty()) return List.of();
 
-        Rule rule = ruleConfig.ruleFor(ts.getHashtag().toString());
-        if (ts.getSurgeScore() < rule.minSurge() || ts.getCount() < rule.minCount())
-            return List.of();
+        // Rule rule = ruleConfig.ruleFor(ts.getHashtag().toString());
+        // if (ts.getSurgeScore() < rule.minSurge() || ts.getCount() < rule.minCount())
+        //     return List.of();
 
-        return followers.getUserIds().stream().
-                map(uId -> {
-                    return TrendAlert.newBuilder()
+        List<TrendAlert> alerts = followers.getUserIds().stream()
+                .map(uId -> TrendAlert.newBuilder()
                     .setUserId(uId)
                     .setHashtag(ts.getHashtag().toString())
                     .setSurgeScore(ts.getSurgeScore())
@@ -111,8 +130,12 @@ public class AlertProcessor {
                     .setWindowEnd(ts.getWindowEnd())
                     .setCount(ts.getCount())
                     .setMsg("🔥 " + ts.getHashtag() + " spiked to " + ts.getCount())
-                    .build();
-                }).toList();
+                    .build())
+                .toList();
+
+        System.out.println("Generated alerts: " + alerts);
+
+        return alerts;
     }
     
 }
