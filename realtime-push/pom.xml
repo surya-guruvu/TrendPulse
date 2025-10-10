@@ -26,6 +26,12 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
+		<!-- Avro serializer for Kafka (Confluent) -->
+		<dependency>
+			<groupId>io.confluent</groupId>
+			<artifactId>kafka-avro-serializer</artifactId>
+			<version>7.6.0</version>
+		</dependency>
 		<dependency>
 			<groupId>com.trendpulse</groupId>
 			<artifactId>common</artifactId>
